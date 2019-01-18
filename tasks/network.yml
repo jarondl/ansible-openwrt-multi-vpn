@@ -1,0 +1,14 @@
+---
+- name: Add virtual network adapter
+  uci:
+    command: section
+    config: network
+    type: interface
+    name: "{{ vpn.name }}"
+    find_by:
+      ifname: tun-{{ vpn.name }}
+    value:
+      proto: none
+      ifname: tun-{{ vpn.name }}
+      delegate: '0'
+      metric: "{{ vpn.metric }}"

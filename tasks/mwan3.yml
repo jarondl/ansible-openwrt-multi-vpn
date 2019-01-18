@@ -1,0 +1,60 @@
+---
+- name: add mwan3 policy
+  uci:
+    command: section
+    config: mwan3
+    type: policy
+    name: "{{ vpn.name }}_only"
+    option: policy
+    value:
+      use_member: ["{{ vpn.name }}_m1"]
+      last_resort: unreachable
+- name: add mwan3 member
+  uci:
+    command: section
+    config: mwan3
+    type: member
+    name: "{{ vpn.name }}_m1"
+    option: member
+    value:
+      interface: "{{ vpn.name }}"
+- name: add mwan3 interface
+  uci:
+    command: section
+    config: mwan3
+    type: interface
+    name: "{{ vpn.name }}"
+    option: interface
+    value:
+      enabled: 1
+      reliability: 1
+      count: 1
+      timeout: 2
+      interval: 5
+      down: 3
+      up: 3
+- name: mwan3 ipset rule
+  uci:
+    command: section
+    config: mwan3
+    type: rule
+    name: "{{ vpn.name }}_ipset"
+    option: rule
+    value:
+      use_policy: "{{ vpn.name }}_only"
+      ipset: "{{ vpn.name }}"
+      proto: all
+      sticky: 0
+- name: mwan3 rule by src_ip
+  when: vpn.srcip is defined
+  uci:
+    command: section
+    config: mwan3
+    type: rule
+    name: "{{ vpn.name }}_srcip"
+    option: rule
+    value:
+      use_policy: "{{ vpn.name }}_only"
+      src_ip: "{{ vpn.srcip }}"
+      proto: all
+      sticky: 0

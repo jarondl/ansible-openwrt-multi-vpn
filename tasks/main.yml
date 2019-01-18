@@ -1,0 +1,56 @@
+---
+- name: install packages
+  opkg:
+    name: "{{ item }}"
+    state: present
+  loop:
+      - openvpn-openssl
+      - dnsmasq-full
+      - mwan3
+      - luci-app-openvpn
+      - luci-app-mwan3
+- name: set wan metric
+  uci: command=set key=network.wan.metric value=10
+  notify: uci commit
+- name: add common vpn config files
+  copy:
+    dest: /etc/openvpn/common.ovpn
+    src: common.ovpn
+- name: revert uci to start with a clean state
+  uci:
+    command: revert
+- name: set up openvpn
+  include_tasks: openvpn.yml
+  loop: "{{ vpns }}"
+  loop_control:
+    loop_var: vpn
+- name: set up network interfaces
+  include_tasks: network.yml
+  loop: "{{ vpns }}"
+  loop_control:
+    loop_var: vpn
+- name: set up firewall
+  include_tasks: firewall.yml
+  loop: "{{ vpns }}"
+  loop_control:
+    loop_var: vpn
+- name: set up mwan3
+  include_tasks: mwan3.yml
+  loop: "{{ vpns }}"
+  loop_control:
+    loop_var: vpn
+- name: set up dnsmasq
+  include_tasks: dnsmasq.yml
+  loop: "{{ vpns }}"
+  loop_control:
+    loop_var: vpn
+
+- name: deny mac addresses
+  when: mac_denies is defined
+  include_tasks: firewall_deny.yml
+  loop: "{{ mac_denies }}"
+  loop_control:
+    loop_var: mac_deny
+- name: commit uci changes
+  uci:
+    command: commit

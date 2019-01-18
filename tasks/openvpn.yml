@@ -1,0 +1,16 @@
+---
+- name: create templated vpn files
+  template:
+    src: vpn.ovpn
+    mode: 644
+    dest: "/etc/openvpn/{{ vpn.name }}.ovpn"
+- name: add openvpn config sections
+  uci:
+    command: section
+    config: openvpn
+    type: openvpn
+    name: "{{ vpn.name }}"
+    option: openvpn
+    value:
+      config: /etc/openvpn/nycvpn.ovpn
+      enabled: 1

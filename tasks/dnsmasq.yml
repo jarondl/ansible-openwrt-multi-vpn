@@ -1,0 +1,8 @@
+---
+- name: dnsmasq tag ipset
+  when: vpn.destdomains is defined
+  uci:
+    command: set
+    key: dhcp.@dnsmasq[0].ipset
+    value:
+      - "/{{ '/'.join(vpn.destdomains) }}/{{ vpn.name }}"

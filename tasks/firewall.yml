@@ -1,0 +1,25 @@
+---
+- name: add firewall zone
+  uci:
+    command: section
+    config: firewall
+    type: zone
+    find_by:
+      name: "{{ vpn.name }}"
+    value:
+      input: REJECT
+      forward: REJECT
+      output: ACCEPT
+      name: "{{ vpn.name }}"
+      masq: 1
+      network: "{{ vpn.name }}"
+- name: add firewall forwarding
+  uci:
+    command: section
+    config: firewall
+    type: forwarding
+    find_by:
+      dest: "{{ vpn.name }}"
+    value:
+      dest: "{{ vpn.name }}"
+      src: lan

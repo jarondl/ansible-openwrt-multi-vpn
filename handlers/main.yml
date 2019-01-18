@@ -1,0 +1,7 @@
+---
+- name: restart mwan3
+  debug:
+    msg: "restart mwan3"
+- name: restart openvpn
+  debug:
+    msg: "restart openvpn"

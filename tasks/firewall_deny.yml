@@ -1,0 +1,15 @@
+---
+- name: block mac address from direct internet access
+  uci:
+    command: section
+    config: firewall
+    type: rule
+    find_by:
+      name: deny-{{ mac_deny }}
+    value:
+      src: lan
+      dest: wan
+      name: deny-{{ mac_deny }}
+      proto: all
+      src_mac: "{{ mac_deny }}"
+      target: REJECT

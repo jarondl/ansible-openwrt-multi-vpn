@@ -1,0 +1,11 @@
+galaxy_info:
+  author: jarondl
+  description: multiple vpn setup on openwrt
+
+  license: Apache
+
+  min_ansible_version: 2.4
+  galaxy_tags: []
+
+dependencies:
+  - src: https://github.com/gekmihesg/ansible-openwrt.git
