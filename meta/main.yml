@@ -8,4 +8,4 @@ galaxy_info:
   galaxy_tags: []
 
 dependencies:
-  - src: https://github.com/gekmihesg/ansible-openwrt.git
+  - gekmihesg.ansible-openwrt
